@@ -48,6 +48,7 @@ mod tests {
     }
 }
 
+#[cfg(test)]
 const INPUT: &str = "199
 200
 208
