@@ -1,5 +1,5 @@
-pub fn part_1(input: &str) -> u32 {
-    let input: Vec<u32> = input.lines().map(|line| line.parse().unwrap()).collect();
+pub fn part_1(input: &str) -> i32 {
+    let input: Vec<i32> = input.lines().map(|line| line.parse().unwrap()).collect();
 
     let mut acc = 0;
 
@@ -12,8 +12,8 @@ pub fn part_1(input: &str) -> u32 {
     acc
 }
 
-pub fn part_2(input: &str) -> u32 {
-    let input: Vec<u32> = input.lines().map(|line| line.parse().unwrap()).collect();
+pub fn part_2(input: &str) -> i32 {
+    let input: Vec<i32> = input.lines().map(|line| line.parse().unwrap()).collect();
 
     let windows = input.windows(3);
 
@@ -23,7 +23,7 @@ pub fn part_2(input: &str) -> u32 {
     i1.clone()
         .zip(i2.clone().skip(1))
         .fold(0, |acc, (prev, cur)| {
-            if prev.iter().sum::<u32>() < cur.iter().sum::<u32>() {
+            if prev.iter().sum::<i32>() < cur.iter().sum::<i32>() {
                 acc + 1
             } else {
                 acc

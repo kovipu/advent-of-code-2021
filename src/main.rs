@@ -4,26 +4,23 @@ mod day01;
 mod day02;
 
 fn main() {
-    println!("Running solution for day 1...");
+    for day in 1..=2 {
+        let input_filename = format!("inputs/{:02}.txt", day);
+        let input = fs::read_to_string(input_filename).unwrap();
+        let (part_1, part_2) = get_day(day);
 
-    let day_1_input =
-        fs::read_to_string("inputs/01.txt").expect("Something went wrong reading the input file");
+        println!();
+        println!("Running solution for day {}...", day);
+        println!("Part 1: {}", part_1(&input));
+        println!("Part 2: {}", part_2(&input));
+    }
+    println!();
+}
 
-    let day_1_output_1 = day01::part_1(&day_1_input);
-    println!("Part 1 output: {}", day_1_output_1);
-
-    let day_1_output_2 = day01::part_2(&day_1_input);
-    println!("Part 2 output: {}", day_1_output_2);
-
-    println!("");
-    println!("Running solution for day 2...");
-
-    let day_2_input =
-        fs::read_to_string("inputs/02.txt").expect("Something went wrong reading the input file");
-
-    let day_2_output_1 = day02::part_1(&day_2_input);
-    println!("Part 1 output: {}", day_2_output_1);
-
-    let day_2_output_2 = day02::part_2(&day_2_input);
-    println!("Part 2 output: {}", day_2_output_2);
+fn get_day(day: u32) -> (fn(&str) -> i32, fn(&str) -> i32) {
+    match day {
+        1 => (day01::part_1, day01::part_2),
+        2 => (day02::part_1, day02::part_2),
+        _ => panic!("Day {} not implemented", day),
+    }
 }
