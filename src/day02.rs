@@ -3,6 +3,7 @@ pub fn part_1(input: &str) -> i32 {
         let words: Vec<&str> = line.split_whitespace().collect();
         let direction = words[0];
         let x: i32 = words[1].parse().unwrap();
+
         match direction {
             "forward" => (position + x, depth),
             "down" => (position, depth + x),
@@ -14,6 +15,26 @@ pub fn part_1(input: &str) -> i32 {
     position * depth
 }
 
+pub fn part_2(input: &str) -> i32 {
+    let (_aim, position, depth): (i32, i32, i32) =
+        input
+            .lines()
+            .fold((0, 0, 0), |(aim, position, depth), line| {
+                let words: Vec<&str> = line.split_whitespace().collect();
+                let direction = words[0];
+                let x: i32 = words[1].parse().unwrap();
+
+                match direction {
+                    "down" => (aim + x, position, depth),
+                    "up" => (aim - x, position, depth),
+                    "forward" => (aim, position + x, depth + (aim * x)),
+                    _ => panic!("Unknown direction: {}", direction),
+                }
+            });
+
+    position * depth
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -21,6 +42,11 @@ mod tests {
     #[test]
     fn test_part_1() {
         assert_eq!(part_1(INPUT), 150);
+    }
+
+    #[test]
+    fn test_part_2() {
+        assert_eq!(part_2(INPUT), 900);
     }
 }
 

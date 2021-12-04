@@ -23,4 +23,7 @@ fn main() {
 
     let day_2_output_1 = day02::part_1(&day_2_input);
     println!("Part 1 output: {}", day_2_output_1);
+
+    let day_2_output_2 = day02::part_2(&day_2_input);
+    println!("Part 2 output: {}", day_2_output_2);
 }
