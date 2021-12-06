@@ -1,11 +1,5 @@
 pub fn part_1(input: &str) -> i32 {
-    let drawn_numbers: Vec<i32> = input
-        .lines()
-        .next()
-        .unwrap()
-        .split(',')
-        .map(|x| x.parse::<i32>().unwrap())
-        .collect();
+    let drawn_numbers: Vec<i32> = get_drawn_numbers(input);
 
     let boards: Vec<Bingo> = input.split("\n\n").skip(1).map(Bingo::new).collect();
 
@@ -13,7 +7,21 @@ pub fn part_1(input: &str) -> i32 {
 }
 
 pub fn part_2(input: &str) -> i32 {
-    0
+    let drawn_numbers: Vec<i32> = get_drawn_numbers(input);
+
+    let boards: Vec<Bingo> = input.split("\n\n").skip(1).map(Bingo::new).collect();
+
+    find_losing_score(&boards, &drawn_numbers)
+}
+
+fn get_drawn_numbers(input: &str) -> Vec<i32> {
+    input
+        .lines()
+        .next()
+        .unwrap()
+        .split(',')
+        .map(|x| x.parse::<i32>().unwrap())
+        .collect()
 }
 
 fn find_winning_score(boards: &[Bingo], drawn_numbers: &[i32]) -> i32 {
@@ -21,14 +29,29 @@ fn find_winning_score(boards: &[Bingo], drawn_numbers: &[i32]) -> i32 {
         let numbers = drawn_numbers[0..idx].to_vec();
         for board in boards {
             if board.is_bingo(&numbers) {
-                return board.calculate_score(&numbers) * numbers[idx - 1];
+                return board.sum_unmarked(&numbers) * numbers[idx - 1];
             }
         }
     }
     0
 }
 
-#[derive(Debug)]
+fn find_losing_score(boards: &[Bingo], drawn_numbers: &[i32]) -> i32 {
+    let mut boards_still_playing: Vec<Bingo> = boards.to_vec();
+
+    for idx in 5..drawn_numbers.len() {
+        let numbers = drawn_numbers[0..idx].to_vec();
+
+        if boards_still_playing.len() == 1 && boards_still_playing[0].is_bingo(&numbers) {
+            return boards_still_playing[0].sum_unmarked(&numbers) * numbers[idx - 1];
+        }
+
+        boards_still_playing.retain(|board| !board.is_bingo(&numbers));
+    }
+    0
+}
+
+#[derive(Debug, Clone)]
 struct Bingo {
     board: Vec<Vec<i32>>,
 }
@@ -63,16 +86,16 @@ impl Bingo {
         line_bingo || column_bingo
     }
 
-    fn calculate_score(&self, numbers: &[i32]) -> i32 {
-        let mut score = 0;
+    fn sum_unmarked(&self, numbers: &[i32]) -> i32 {
+        let mut sum = 0;
         for row in &self.board {
             for &num in row {
                 if !numbers.contains(&num) {
-                    score += num;
+                    sum += num;
                 }
             }
         }
-        score
+        sum
     }
 }
 
@@ -83,6 +106,11 @@ mod tests {
     #[test]
     fn test_part_1() {
         assert_eq!(part_1(INPUT), 4512);
+    }
+
+    #[test]
+    fn test_part_2() {
+        assert_eq!(part_2(INPUT), 1924);
     }
 }
 
