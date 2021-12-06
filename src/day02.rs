@@ -1,4 +1,4 @@
-pub fn part_1(input: &str) -> i32 {
+pub fn part_1(input: &str) -> i64 {
     let (position, depth): (i32, i32) = input.lines().fold((0, 0), |(position, depth), line| {
         let words: Vec<&str> = line.split_whitespace().collect();
         let direction = words[0];
@@ -12,10 +12,10 @@ pub fn part_1(input: &str) -> i32 {
         }
     });
 
-    position * depth
+    (position * depth) as i64
 }
 
-pub fn part_2(input: &str) -> i32 {
+pub fn part_2(input: &str) -> i64 {
     let (_aim, position, depth): (i32, i32, i32) =
         input
             .lines()
@@ -32,7 +32,7 @@ pub fn part_2(input: &str) -> i32 {
                 }
             });
 
-    position * depth
+    (position * depth) as i64
 }
 
 #[cfg(test)]

@@ -1,17 +1,17 @@
-pub fn part_1(input: &str) -> i32 {
+pub fn part_1(input: &str) -> i64 {
     let drawn_numbers: Vec<i32> = get_drawn_numbers(input);
 
     let boards: Vec<Bingo> = input.split("\n\n").skip(1).map(Bingo::new).collect();
 
-    find_winning_score(&boards, &drawn_numbers)
+    find_winning_score(&boards, &drawn_numbers) as i64
 }
 
-pub fn part_2(input: &str) -> i32 {
+pub fn part_2(input: &str) -> i64 {
     let drawn_numbers: Vec<i32> = get_drawn_numbers(input);
 
     let boards: Vec<Bingo> = input.split("\n\n").skip(1).map(Bingo::new).collect();
 
-    find_losing_score(&boards, &drawn_numbers)
+    find_losing_score(&boards, &drawn_numbers) as i64
 }
 
 fn get_drawn_numbers(input: &str) -> Vec<i32> {

@@ -1,4 +1,4 @@
-pub fn part_1(input: &str) -> i32 {
+pub fn part_1(input: &str) -> i64 {
     let input: Vec<i32> = input.lines().map(|line| line.parse().unwrap()).collect();
 
     let mut acc = 0;
@@ -12,7 +12,7 @@ pub fn part_1(input: &str) -> i32 {
     acc
 }
 
-pub fn part_2(input: &str) -> i32 {
+pub fn part_2(input: &str) -> i64 {
     let input: Vec<i32> = input.lines().map(|line| line.parse().unwrap()).collect();
 
     let windows = input.windows(3);

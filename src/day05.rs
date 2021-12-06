@@ -2,7 +2,7 @@ use regex::Regex;
 
 const MAP_SIZE: usize = 1000;
 
-pub fn part_1(input: &str) -> i32 {
+pub fn part_1(input: &str) -> i64 {
     let lines = input
         .lines()
         .map(|line| Vent::new(line, true))
@@ -20,7 +20,7 @@ pub fn part_1(input: &str) -> i32 {
     map.iter().filter(|x| *x > &1).count().try_into().unwrap()
 }
 
-pub fn part_2(input: &str) -> i32 {
+pub fn part_2(input: &str) -> i64 {
     let lines = input
         .lines()
         .map(|line| Vent::new(line, false))

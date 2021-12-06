@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn part_1(input: &str) -> i32 {
+pub fn part_1(input: &str) -> i64 {
     let input: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
     let transposed_array = transpose(input);
 
@@ -18,10 +18,10 @@ pub fn part_1(input: &str) -> i32 {
     let gamma_rate: i32 = i32::from_str_radix(&most_commons, 2).unwrap();
     let epsilon_rate: i32 = i32::from_str_radix(&least_commons, 2).unwrap();
 
-    gamma_rate * epsilon_rate
+    (gamma_rate * epsilon_rate) as i64
 }
 
-pub fn part_2(input: &str) -> i32 {
+pub fn part_2(input: &str) -> i64 {
     let input: Vec<&str> = input.lines().collect();
 
     let oxygen_generator_rating = calculate_rating(&input, false, 0);
@@ -30,7 +30,7 @@ pub fn part_2(input: &str) -> i32 {
     let co2_scrubber_rating = calculate_rating(&input, true, 0);
     let co2_scrubber_rating = i32::from_str_radix(&co2_scrubber_rating, 2).unwrap();
 
-    oxygen_generator_rating * co2_scrubber_rating
+    (oxygen_generator_rating * co2_scrubber_rating) as i64
 }
 
 fn calculate_rating(input: &[&str], use_least_common: bool, search_index: usize) -> String {
