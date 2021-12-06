@@ -80,7 +80,6 @@ fn transpose(v: Vec<Vec<char>>) -> Vec<Vec<char>> {
         .collect()
 }
 
-// might not default to 1 or 0 as it should
 fn most_common(v: &[char]) -> char {
     let mut counts = HashMap::new();
     for i in v {
