@@ -2,9 +2,10 @@ use std::fs;
 
 mod day01;
 mod day02;
+mod day03;
 
 fn main() {
-    for day in 1..=2 {
+    for day in 1..=3 {
         let input_filename = format!("inputs/{:02}.txt", day);
         let input = fs::read_to_string(input_filename).unwrap();
         let (part_1, part_2) = get_day(day);
@@ -21,6 +22,7 @@ fn get_day(day: u32) -> (fn(&str) -> i32, fn(&str) -> i32) {
     match day {
         1 => (day01::part_1, day01::part_2),
         2 => (day02::part_1, day02::part_2),
+        3 => (day03::part_1, day03::part_2),
         _ => panic!("Day {} not implemented", day),
     }
 }
