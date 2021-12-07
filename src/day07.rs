@@ -1,27 +1,25 @@
 pub fn part_1(input: &str) -> i64 {
-    let input: Vec<i32> = input.split(',').map(|x| x.parse().unwrap()).collect();
+    let mut input: Vec<i32> = input.split(',').map(|x| x.parse().unwrap()).collect();
+    input.sort_unstable();
 
-    let min_position = &input.iter().min().unwrap().clone();
-    let max_position = &input.iter().max().unwrap().clone();
+    let median = *input.get(input.len() / 2).unwrap();
 
-    let possible_fuel_values = (*min_position..*max_position)
-        .map(|pos| input.iter().map(|crab| (pos - crab).abs()).sum::<i32>());
-
-    possible_fuel_values.min().unwrap() as i64
+    input.iter().map(|crab| (median - crab).abs()).sum::<i32>() as i64
 }
 
 pub fn part_2(input: &str) -> i64 {
     let input: Vec<i32> = input.split(',').map(|x| x.parse().unwrap()).collect();
 
-    let min_position = &input.iter().min().unwrap().clone();
-    let max_position = &input.iter().max().unwrap().clone();
+    let min_position = *input.iter().min().unwrap();
+    let max_position = *input.iter().max().unwrap();
 
-    let possible_fuel_values = (*min_position..*max_position).map(|pos| {
+    let possible_fuel_values = (min_position..max_position).map(|pos| {
         input
             .iter()
             .map(|crab| {
                 let distance = (pos - crab).abs();
-                (0..=distance).sum::<i32>()
+                // formula to calculate sum from 0 to distance
+                distance * (distance + 1) / 2
             })
             .sum::<i32>()
     });
