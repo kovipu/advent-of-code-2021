@@ -96,19 +96,18 @@ impl LavaTube {
 
     fn get_neighbors(&self, i: usize) -> Vec<&Point> {
         // use checked functions to avoid overflow
-
-        // check the point is is not at edge
-
         let left = if i % self.width != 0 {
             i.checked_sub(1)
         } else {
             None
         };
+
         let right = if i % self.width != self.width - 1 {
             i.checked_add(1)
         } else {
             None
         };
+
         let up = i.checked_sub(self.width);
         let down = i.checked_add(self.width);
 
