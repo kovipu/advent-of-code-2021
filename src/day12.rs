@@ -2,12 +2,12 @@ use std::collections::HashMap;
 
 pub fn part_1(input: &str) -> i64 {
     let connections: HashMap<&str, Vec<&str>> = connections_hashmap(&input);
-    find_paths(&connections, &[], "start").len() as i64
+    find_paths(&connections, &[], "start", true).len() as i64
 }
 
 pub fn part_2(input: &str) -> i64 {
     let connections: HashMap<&str, Vec<&str>> = connections_hashmap(&input);
-    find_paths_2(&connections, &[], "start", false).len() as i64
+    find_paths(&connections, &[], "start", false).len() as i64
 }
 
 fn connections_hashmap(input: &str) -> HashMap<&str, Vec<&str>> {
@@ -36,32 +36,6 @@ fn find_paths<'a>(
     connections: &'a HashMap<&str, Vec<&str>>,
     path: &[&'a str],
     cave: &'a str,
-) -> Vec<Vec<&'a str>> {
-    let mut new_path = path.to_owned();
-    new_path.push(cave);
-
-    if cave.to_lowercase() == *cave && path.contains(&cave) {
-        return vec![];
-    } else if cave == "end" {
-        return vec![new_path];
-    }
-
-    connections
-        .get(cave)
-        .unwrap()
-        .iter()
-        .fold(vec![], |mut acc, connection| {
-            for path in find_paths(connections, &new_path, connection) {
-                acc.push(path);
-            }
-            acc
-        })
-}
-
-fn find_paths_2<'a>(
-    connections: &'a HashMap<&str, Vec<&str>>,
-    path: &[&'a str],
-    cave: &'a str,
     cave_visited_twice: bool,
 ) -> Vec<Vec<&'a str>> {
     let mut new_path = path.to_owned();
@@ -85,7 +59,7 @@ fn find_paths_2<'a>(
                 return acc;
             }
 
-            for path in find_paths_2(connections, &new_path, connection, new_cave_visited_twice) {
+            for path in find_paths(connections, &new_path, connection, new_cave_visited_twice) {
                 acc.push(path);
             }
             acc
