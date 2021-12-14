@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
 pub fn part_1(input: &str) -> i64 {
-    let connections: HashMap<&str, Vec<&str>> = connections_hashmap(&input);
+    let connections: HashMap<&str, Vec<&str>> = connections_hashmap(input);
     find_paths(&connections, &[], "start", true).len() as i64
 }
 
 pub fn part_2(input: &str) -> i64 {
-    let connections: HashMap<&str, Vec<&str>> = connections_hashmap(&input);
+    let connections: HashMap<&str, Vec<&str>> = connections_hashmap(input);
     find_paths(&connections, &[], "start", false).len() as i64
 }
 
