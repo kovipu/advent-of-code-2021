@@ -67,7 +67,7 @@ fn read_packet(binary: &str) -> Packet {
                 chunk_start += 5;
             }
 
-            let literal_data = i64::from_str_radix(&binary_data, 2).unwrap();
+            let literal_data = i32::from_str_radix(&binary_data, 2).unwrap();
 
             Packet {
                 version,
@@ -108,10 +108,24 @@ fn read_packet(binary: &str) -> Packet {
                 header_length + 16 + data_length
             };
 
+            let operator_type = match packet_type {
+                0 => OperatorType::Sum,
+                1 => OperatorType::Product,
+                2 => OperatorType::Minimum,
+                3 => OperatorType::Maximum,
+                5 => OperatorType::GreaterThan,
+                6 => OperatorType::LessThan,
+                7 => OperatorType::EqualTo,
+                _ => panic!("Invalid operator type: {}", packet_type),
+            };
+
             Packet {
                 version,
                 length,
-                data: PacketData::Operator(sub_packets),
+                data: PacketData::Operator(OperatorData {
+                    operator_type,
+                    sub_packets,
+                }),
             }
         }
     }
@@ -120,10 +134,13 @@ fn read_packet(binary: &str) -> Packet {
 fn version_sum(packet: Packet) -> i64 {
     match packet.data {
         PacketData::Literal(_) => packet.version as i64,
-        PacketData::Operator(packets) => {
+        PacketData::Operator(OperatorData {
+            sub_packets,
+            operator_type: _,
+        }) => {
             let mut sum: i64 = packet.version as i64;
 
-            for sub_packet in packets {
+            for sub_packet in sub_packets {
                 sum += version_sum(sub_packet);
             }
 
@@ -141,8 +158,25 @@ struct Packet {
 
 #[derive(Debug, PartialEq, Clone)]
 enum PacketData {
-    Literal(i64),
-    Operator(Vec<Packet>),
+    Literal(i32),
+    Operator(OperatorData),
+}
+
+#[derive(Debug, PartialEq, Clone)]
+struct OperatorData {
+    operator_type: OperatorType,
+    sub_packets: Vec<Packet>,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+enum OperatorType {
+    Sum,
+    Product,
+    Minimum,
+    Maximum,
+    GreaterThan,
+    LessThan,
+    EqualTo,
 }
 
 #[cfg(test)]
@@ -173,18 +207,21 @@ mod tests {
             Packet {
                 version: 1,
                 length: 49,
-                data: PacketData::Operator(vec![
-                    Packet {
-                        version: 6,
-                        length: 11,
-                        data: PacketData::Literal(10),
-                    },
-                    Packet {
-                        version: 2,
-                        length: 16,
-                        data: PacketData::Literal(20),
-                    },
-                ]),
+                data: PacketData::Operator(OperatorData {
+                    operator_type: OperatorType::LessThan,
+                    sub_packets: vec![
+                        Packet {
+                            version: 6,
+                            length: 11,
+                            data: PacketData::Literal(10),
+                        },
+                        Packet {
+                            version: 2,
+                            length: 16,
+                            data: PacketData::Literal(20),
+                        },
+                    ]
+                }),
             }
         );
     }
