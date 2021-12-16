@@ -5,7 +5,9 @@ pub fn part_1(input: &str) -> i64 {
 }
 
 pub fn part_2(input: &str) -> i64 {
-    0
+    let binary_data: String = hex_to_bin(input);
+    let packet: Packet = read_packet(&binary_data);
+    evaluate_packet(&packet)
 }
 
 fn hex_to_bin(input: &str) -> String {
@@ -67,7 +69,7 @@ fn read_packet(binary: &str) -> Packet {
                 chunk_start += 5;
             }
 
-            let literal_data = i32::from_str_radix(&binary_data, 2).unwrap();
+            let literal_data = i64::from_str_radix(&binary_data, 2).unwrap();
 
             Packet {
                 version,
@@ -149,6 +151,47 @@ fn version_sum(packet: Packet) -> i64 {
     }
 }
 
+fn evaluate_packet(packet: &Packet) -> i64 {
+    match &packet.data {
+        PacketData::Literal(literal) => *literal,
+        PacketData::Operator(OperatorData {
+            sub_packets,
+            operator_type,
+        }) => {
+            let iter = sub_packets.iter();
+            match operator_type {
+                OperatorType::Sum => iter.fold(0, |acc, sb| acc + evaluate_packet(sb)),
+                OperatorType::Product => iter.fold(1, |acc, sb| acc * evaluate_packet(sb)),
+                OperatorType::Minimum => {
+                    iter.fold(std::i64::MAX, |acc, sb| acc.min(evaluate_packet(sb)))
+                }
+                OperatorType::Maximum => iter.fold(0, |acc, sb| acc.max(evaluate_packet(sb))),
+                OperatorType::GreaterThan => {
+                    if evaluate_packet(&sub_packets[0]) > evaluate_packet(&sub_packets[1]) {
+                        1
+                    } else {
+                        0
+                    }
+                }
+                OperatorType::LessThan => {
+                    if evaluate_packet(&sub_packets[0]) < evaluate_packet(&sub_packets[1]) {
+                        1
+                    } else {
+                        0
+                    }
+                }
+                OperatorType::EqualTo => {
+                    if evaluate_packet(&sub_packets[0]) == evaluate_packet(&sub_packets[1]) {
+                        1
+                    } else {
+                        0
+                    }
+                }
+            }
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Clone)]
 struct Packet {
     version: u8,
@@ -158,7 +201,7 @@ struct Packet {
 
 #[derive(Debug, PartialEq, Clone)]
 enum PacketData {
-    Literal(i32),
+    Literal(i64),
     Operator(OperatorData),
 }
 
@@ -233,7 +276,7 @@ mod tests {
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(INPUT), 0);
+        assert_eq!(part_2(INPUT_2), 1);
     }
 }
 
@@ -248,3 +291,6 @@ const INPUT_BIN_OPERATOR: &str = "0011100000000000011011110100010100101001000100
 
 #[cfg(test)]
 const INPUT: &str = "A0016C880162017C3686B18A3D4780";
+
+#[cfg(test)]
+const INPUT_2: &str = "9C0141080250320F1802104A08";
