@@ -1,4 +1,5 @@
-use std::collections::{HashMap, HashSet};
+use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashSet};
 
 pub fn part_1(input: &str) -> i64 {
     let cave: Cave = Cave::new(input);
@@ -6,53 +7,41 @@ pub fn part_1(input: &str) -> i64 {
 }
 
 pub fn part_2(input: &str) -> i64 {
-    0
+    let cave = Cave::new_five_times_as_large(input);
+    find_least_dangerous(cave)
 }
 
 fn find_least_dangerous(cave: Cave) -> i64 {
-    // find path using Dijkstra's algorithm
-    let mut searched: HashSet<usize> = HashSet::new();
-    let mut distances: HashMap<usize, (usize, i32)> = HashMap::new();
-    let mut current: usize = 0;
+    // efficient Djikstra's using a priority queue
+    let mut pq: BinaryHeap<SearchedPoint> = BinaryHeap::new();
+    let mut visited: HashSet<usize> = HashSet::new();
 
-    loop {
-        let neighbors: Vec<usize> = cave.get_neighbors(current);
+    let goal: usize = cave.points.len() - 1;
 
-        if current == cave.width * cave.height - 1 {
-            break;
+    // priority queue should have the point with smallest danger at the top
+    pq.push(SearchedPoint { idx: 0, danger: 0 });
+    visited.insert(0);
+
+    // we should pop the one with the smallest danger. hmm.
+    while let Some(SearchedPoint { idx, danger }) = pq.pop() {
+        if idx == goal {
+            return danger;
         }
 
-        for &n in neighbors.iter().filter(|&n| !searched.contains(n)) {
-            // check new distance to neighbors
-            // if distance is smaller than previously found, update
-            let (_, old_distance) = distances.get(&n).unwrap_or(&(0, std::i32::MAX));
-
-            let new_distance =
-                distances.get(&current).unwrap_or(&(0, 0)).1 + (cave.points[n] as i32);
-
-            if new_distance < *old_distance {
-                distances.insert(n, (current, new_distance));
+        for n_idx in cave.get_neighbors(idx) {
+            if visited.contains(&n_idx) {
+                continue;
             }
+
+            visited.insert(n_idx);
+            pq.push(SearchedPoint {
+                idx: n_idx,
+                danger: danger + cave.points[n_idx] as i64,
+            });
         }
-
-        // set current to smallest distance
-        searched.insert(current);
-
-        // filter points already visited
-        let smallest_distance = distances
-            .iter()
-            .filter(|(key, _)| !searched.contains(key))
-            .min_by_key(|(_, value)| value.1)
-            .unwrap();
-
-        current = *smallest_distance.0;
     }
 
-    distances
-        .get(&(cave.width * cave.height - 1))
-        .unwrap()
-        .1
-        .into()
+    panic!("No path found!");
 }
 
 struct Cave {
@@ -70,6 +59,36 @@ impl Cave {
             .chars()
             .map(|c| c.to_digit(10).unwrap() as u8)
             .collect();
+
+        Cave {
+            width,
+            height,
+            points,
+        }
+    }
+
+    fn new_five_times_as_large(input: &str) -> Cave {
+        let width: usize = input.lines().next().unwrap().len() * 5;
+        let height: usize = input.lines().count() * 5;
+
+        let mut points: Vec<u8> = Vec::new();
+
+        for y in 0..5 {
+            input.lines().for_each(|line| {
+                // copy line 5 times
+                for x in 0..5 {
+                    line.chars().for_each(|c| {
+                        let val = (c.to_digit(10).unwrap() + x + y) as u8;
+
+                        if val > 9 {
+                            points.push(val - 9);
+                        } else {
+                            points.push(val);
+                        }
+                    });
+                }
+            });
+        }
 
         Cave {
             width,
@@ -101,6 +120,30 @@ impl Cave {
     }
 }
 
+#[derive(Debug, Eq)]
+struct SearchedPoint {
+    danger: i64,
+    idx: usize,
+}
+
+impl Ord for SearchedPoint {
+    fn cmp(&self, other: &SearchedPoint) -> Ordering {
+        other.danger.cmp(&self.danger)
+    }
+}
+
+impl PartialOrd for SearchedPoint {
+    fn partial_cmp(&self, other: &SearchedPoint) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl PartialEq for SearchedPoint {
+    fn eq(&self, other: &SearchedPoint) -> bool {
+        self.idx == other.idx
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -112,7 +155,7 @@ mod tests {
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(INPUT), 0);
+        assert_eq!(part_2(INPUT), 315);
     }
 }
 
