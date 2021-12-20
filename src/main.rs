@@ -17,9 +17,10 @@ mod day14;
 mod day15;
 mod day16;
 mod day17;
+mod day18;
 
 fn main() {
-    for day in 1..=17 {
+    for day in 1..=18 {
         let input_filename = format!("inputs/{:02}.txt", day);
         let input = fs::read_to_string(input_filename).unwrap();
         let (part_1, part_2) = get_day(day);
@@ -51,6 +52,7 @@ fn get_day(day: u32) -> (DayFn, DayFn) {
         15 => (day15::part_1, day15::part_2),
         16 => (day16::part_1, day16::part_2),
         17 => (day17::part_1, day17::part_2),
+        18 => (day18::part_1, day18::part_2),
         _ => panic!("Day {} not implemented", day),
     }
 }
