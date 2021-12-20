@@ -6,13 +6,11 @@ TODO: come back and try again.
 use SnailfishNumber::*;
 
 pub fn part_1(input: &str) -> i64 {
-    let _sum = input
-        .lines()
-        .map(|line| {
-            SnailfishNumber::new(line).0
-        })
-        .reduce(|acc, number| acc.add(&number))
-        .unwrap();
+    // let _sum = input
+    //     .lines()
+    //     .map(|line| SnailfishNumber::new(line).0)
+    //     .reduce(|acc, number| acc.add(&number))
+    //     .unwrap();
     0
 }
 

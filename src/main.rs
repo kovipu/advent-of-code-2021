@@ -18,22 +18,39 @@ mod day15;
 mod day16;
 mod day17;
 mod day18;
+mod day19;
+mod day20;
 
 fn main() {
-    for day in 1..=18 {
-        let input_filename = format!("inputs/{:02}.txt", day);
-        let input = fs::read_to_string(input_filename).unwrap();
-        let (part_1, part_2) = get_day(day);
+    let args: Vec<String> = std::env::args().collect();
 
+    // day given as first argument
+    if args.len() >= 2 {
+        let day = args[1].parse().expect("Argument must be a number");
+        run_day(day);
         println!();
-        println!("Running solution for day {}...", day);
-        println!("Part 1: {}", part_1(&input));
-        println!("Part 2: {}", part_2(&input));
+        return;
+    }
+
+    // no argument, run all days
+    for day in 1..=20 {
+        run_day(day);
     }
     println!();
 }
 
-fn get_day(day: u32) -> (DayFn, DayFn) {
+fn run_day(day: u8) {
+    let input_filename = format!("inputs/{:02}.txt", day);
+    let input = fs::read_to_string(input_filename).unwrap();
+    let (part_1, part_2) = get_day(day);
+
+    println!();
+    println!("Running solution for day {}...", day);
+    println!("Part 1: {}", part_1(&input));
+    println!("Part 2: {}", part_2(&input));
+}
+
+fn get_day(day: u8) -> (DayFn, DayFn) {
     match day {
         1 => (day01::part_1, day01::part_2),
         2 => (day02::part_1, day02::part_2),
@@ -53,6 +70,8 @@ fn get_day(day: u32) -> (DayFn, DayFn) {
         16 => (day16::part_1, day16::part_2),
         17 => (day17::part_1, day17::part_2),
         18 => (day18::part_1, day18::part_2),
+        19 => (day19::part_1, day19::part_2),
+        20 => (day20::part_1, day20::part_2),
         _ => panic!("Day {} not implemented", day),
     }
 }
